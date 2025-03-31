@@ -3,15 +3,6 @@
 ## 📚 Introduction  
 Backend for the Mock Project, built with **Node.js**, **MongoDB**, and **Docker**. This provides the API for managing data and authentication.
 
-## 📌 Table of Contents  
-- [Installation](#-installation)  
-- [API Endpoints](#-api-endpoints)  
-- [Docker Setup](#-docker-setup)  
-- [Technologies Used](#-technologies-used)  
-- [Contributing](#-contributing)  
-- [Author](#-author)  
-- [License](#-license)  
-
 ## ⚙️ Installation  
 To set up the backend on your local machine:  
 ```sh
