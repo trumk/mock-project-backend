@@ -1,0 +1,33 @@
+{
+  "name": "mock-project-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "start": "npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trumk/mock-project-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trumk/mock-project-backend/issues"
+  },
+  "homepage": "https://github.com/trumk/mock-project-backend#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "jose": "^6.0.10",
+    "mongoose": "^8.13.1",
+    "nodemon": "^3.1.9"
+  }
+}
