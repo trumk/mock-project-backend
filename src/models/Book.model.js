@@ -3,11 +3,9 @@ import mongoose from "mongoose"
 const Schema = mongoose.Schema;
 const bookSchema = new Schema({
     author: [{
-        name: {
-            type: String
-        },
-        slug: {
-            type: String
+        name:{
+            type: String,
+            required: true
         }
     }],
     category: {
@@ -62,6 +60,6 @@ const bookSchema = new Schema({
     }]
 })
 
-const Book = mongoose.model("Product", bookSchema);
+const Book = mongoose.model("Book", bookSchema);
 
 export default Book;

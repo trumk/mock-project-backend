@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRouter from "./src/routes/auth.router.js"
 import categoryRouter from "./src/routes/category.router.js"
+import bookRouter from "./src/routes/book.router.js"
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(cors());
 
 app.use("/auth", authRouter);
 app.use("/category", categoryRouter);
+app.use("/book", bookRouter);
 
 const hostname = 'localhost'
 const port = process.env.PORT || 5000;
