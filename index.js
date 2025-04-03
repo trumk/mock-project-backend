@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRouter from "./src/routes/auth.router.js"
+import categoryRouter from "./src/routes/category.router.js"
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use("/auth", authRouter);
+app.use("/category", categoryRouter);
 
 const hostname = 'localhost'
 const port = process.env.PORT || 5000;

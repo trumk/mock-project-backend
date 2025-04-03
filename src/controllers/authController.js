@@ -48,7 +48,7 @@ const authController = {
 
             // Return user json
             const { token, ...others } = user._doc;
-            return res.status(200).json(others);
+            return res.status(201).json(others);
         } catch (err) {
             console.log(err)
             return res.status(500).json(err);
