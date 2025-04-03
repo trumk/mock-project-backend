@@ -2,6 +2,23 @@ import Category from '../models/Category.model.js'
 import Book from '../models/Book.model.js'
 import mongoose from "mongoose"
 
+const updateChildLayers = async (parentId, parentLayer) => {
+    const children = await Category.find({ parent: parentId });
+    
+    if (!children || children.length === 0) {
+        return;
+    }
+    for (const child of children) {
+        const newLayer = parentLayer + 1;
+        await Category.findByIdAndUpdate(
+            child._id,
+            { layer: newLayer },
+            { new: true }
+        );
+        await updateChildLayers(child._id, newLayer);
+    }
+};
+
 const categoryController = {
     createCategory: async (req, res) => {
         try {
@@ -12,13 +29,13 @@ const categoryController = {
                     message: 'Name and image are required fields.'
                 });
             }
-            
+
             let layer = 0;
 
             if (parent) {
                 const parentLayer = await Category.findById(parent);
 
-                
+
                 if (!parentLayer) {
                     return res.status(404).json({
                         success: false,
@@ -34,7 +51,7 @@ const categoryController = {
                 parent: parent || null,
                 layer
             }).save()
-            
+
             return res.status(201).json(newCategory);
         } catch (error) {
             return res.status(500).json(error);
@@ -53,6 +70,9 @@ const categoryController = {
             }
 
             const category = await Category.findById(id)
+
+            console.log(category);
+            
 
             if (!category) {
                 return res.status(4044).json({
@@ -79,6 +99,10 @@ const categoryController = {
                 layer
             },
                 { new: true })
+
+            if (category.layer !== layer) {
+                await updateChildLayers(id, layer);
+            }
             return res.status(200).json(updatedCategory);
         } catch (error) {
             return res.status(500).json(error);
@@ -88,6 +112,22 @@ const categoryController = {
     getAllCategories: async (req, res) => {
         try {
             const categories = await Category.find()
+            if (categories.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Categories not found.'
+                });
+            }
+            return res.status(200).json(categories);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    },
+
+    getCategoriesByLayer: async (req, res) => {
+        try {
+            const layer = req.query.layer
+            const categories = await Category.find({ layer })
             if (categories.length === 0) {
                 return res.status(404).json({
                     success: false,
@@ -125,7 +165,7 @@ const categoryController = {
                         }
                     }
                 }
-            ]);         
+            ]);
 
             if (!result || result.length === 0) {
                 return res.status(404).json({
@@ -135,9 +175,12 @@ const categoryController = {
             }
             const categoryChildren = await Category.find({ parent: id });
 
+            const bookChildren = await Book.find({ category: id })
+
             return res.status(200).json({
-                    category: result[0],
-                    children: categoryChildren
+                category: result[0],
+                children: categoryChildren,
+                bookChildren: bookChildren
             });
         } catch (error) {
             return res.status(500).json(error);
@@ -172,7 +215,7 @@ const categoryController = {
             return res.status(200).json({
                 success: true,
                 message: 'Category and its hierarchy deleted successfully.',
-                categoryDeleted:category,
+                categoryDeleted: category,
                 deletedCategoriesCount: allCategoryIds.length,
                 deletedBooksCount: deletedBooks.deletedCount
             });
