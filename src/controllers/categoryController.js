@@ -172,6 +172,7 @@ const categoryController = {
             return res.status(200).json({
                 success: true,
                 message: 'Category and its hierarchy deleted successfully.',
+                categoryDeleted:category,
                 deletedCategoriesCount: allCategoryIds.length,
                 deletedBooksCount: deletedBooks.deletedCount
             });
