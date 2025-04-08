@@ -36,21 +36,22 @@ export const verifyJWT = async (req, res, next) => {
     const token = req.headers.token;
     if (token) {
         const accessToken = token.split(" ")[1];
-        await jose.jwtVerify(accessToken, secret, (error, user) => {
-            if (error) {
-                return res.status(403).json("Token is not valid");
-            }
-            req.user = user;
+        try {
+            const { payload } = await jose.jwtVerify(accessToken, accessSecret);
+            req.user = payload;
+            console.log(req.user);
+            
             next();
-        })
-    }
-    else {
+        } catch (error) { 
+            return res.status(403).json("Token is not valid");
+        }
+    } else {
         return res.status(401).json("You are not authenticated");
     }
 }
 
 export const verifyAdmin = async (req, res, next) => {
-    verifyJWT(req, res, () => {
+    verifyJWT(req, res, () => { 
         if (req.user.role == "admin") {
             next();
         }
