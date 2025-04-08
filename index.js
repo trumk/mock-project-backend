@@ -23,7 +23,10 @@ mongoose.connect(process.env.MONGO_URL)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 
 function collectRoutes(router, basePath, groupName) {
   router.stack.forEach((layer) => {
