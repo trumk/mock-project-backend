@@ -5,6 +5,9 @@ import mongoose from "mongoose";
 import authRouter from "./src/routes/auth.router.js"
 import categoryRouter from "./src/routes/category.router.js"
 import bookRouter from "./src/routes/book.router.js"
+import discountRouter from "./src/routes/discount.router.js"
+import userRouter from "./src/routes/user.router.js"
+import orderRouter from "./src/routes/order.router.js"
 import { register, createCategory, createCategory1, getALl, getByLayer, getAllChild, deleteCategory, createBook, getBooks } from "./public/example.js"
 
 const app = express();
@@ -13,6 +16,9 @@ const routesList = {
   auth: [],
   category: [],
   book: [],
+  user: [],
+  discount: [],
+  order:[]
 };
 
 dotenv.config();
@@ -36,6 +42,10 @@ function collectRoutes(router, basePath, groupName) {
       methods.forEach(method => {
         const needsAuthorization = layer.route.stack.some(
           middleware => middleware.handle.name === "verifyAdmin"
+        );
+
+        const needsAuthorizationUser = layer.route.stack.some(
+          middleware => middleware.handle.name === "verifyJWT"
         );
 
         let example = {};
@@ -62,7 +72,7 @@ function collectRoutes(router, basePath, groupName) {
         } else {
           example = { note: "No example" };
         }
-        routesList[groupName].push({ method, path, example, needsAuthorization });
+        routesList[groupName].push({ method, path, example, needsAuthorization, needsAuthorizationUser });
       });
     }
   });
@@ -77,11 +87,18 @@ collectRoutes(categoryRouter, "/category", "category");
 app.use("/book", bookRouter);
 collectRoutes(bookRouter, "/book", "book");
 
+app.use("/discount", discountRouter);
+collectRoutes(discountRouter, "/discount", "discount");
+
+app.use("/user", userRouter);
+collectRoutes(userRouter, "/user", "user");
+
+app.use("/order", orderRouter);
+collectRoutes(orderRouter, "/order", "order");
+
 app.get("/api-docs", (req, res) => {
   res.json(routesList);
 });
-
-app.use(express.static("public"));
 
 app.use(express.static("public"));
 
