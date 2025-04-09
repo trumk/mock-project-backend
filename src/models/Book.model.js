@@ -57,7 +57,19 @@ const bookSchema = new Schema({
                 required: true
             }
         }]
-    }]
+    }],
+    freeShip: {
+        type: Boolean,
+        default: false
+    },
+    superFastShip: {
+        type: Boolean,
+        default: false
+    },
+    topDeal: {
+        type: Boolean,
+        default: false
+    }
 })
 
 const Book = mongoose.model("Book", bookSchema);
