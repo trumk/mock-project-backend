@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 const Schema = mongoose.Schema;
 const bookSchema = new Schema({
     author: [{
-        name:{
+        name: {
             type: String,
             required: true
         }
@@ -69,6 +69,12 @@ const bookSchema = new Schema({
     topDeal: {
         type: Boolean,
         default: false
+    },
+    createdAt: {
+        type: Date
+    },
+    updatedAt: {
+        type: Date
     }
 })
 

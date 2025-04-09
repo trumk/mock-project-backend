@@ -43,7 +43,9 @@ const authController = {
             const newUser = new User({
                 email: req.body.email,
                 password: hashedPassword,
-                fullName
+                fullName,
+                createdAt: Date.now(),
+                updatedAt: Date.now()
             });
             const user = await newUser.save();
 
@@ -55,7 +57,6 @@ const authController = {
             const { token, ...others } = user._doc;
             return res.status(201).json(others);
         } catch (err) {
-            console.log(err)
             return res.status(500).json(err);
         }
     },
@@ -80,10 +81,7 @@ const authController = {
 
             // Generate Access Token and Login
             if (user && validPassword) {
-                const accessToken = await generateAccessToken(user);
-
-                console.log(accessToken);
-                
+                const accessToken = await generateAccessToken(user);   
 
                 res.cookie("refreshToken", user.token, {
                     maxAge: 365 * 24 * 60 * 60 * 1000,

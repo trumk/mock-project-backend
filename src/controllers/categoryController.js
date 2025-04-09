@@ -12,7 +12,7 @@ const updateChildLayers = async (parentId, parentLayer) => {
         const newLayer = parentLayer + 1;
         await Category.findByIdAndUpdate(
             child._id,
-            { layer: newLayer },
+            { layer: newLayer, updatedAt: Date.now() },
             { new: true }
         );
         await updateChildLayers(child._id, newLayer);
@@ -96,7 +96,8 @@ const categoryController = {
                 name,
                 image,
                 parent: parent || null,
-                layer
+                layer,
+                updatedAt: Date.now()
             },
                 { new: true })
 
