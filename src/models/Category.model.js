@@ -18,6 +18,12 @@ const categorySchema = new Schema({
     layer: {
         type: Number,
         default: 0
+    },
+    createdAt: {
+        type: Date
+    },
+    updatedAt: {
+        type: Date
     }
 })
 

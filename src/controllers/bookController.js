@@ -4,7 +4,7 @@ const bookController = {
     createBook: async (req, res) => {
         try {
             const { author, category, name, description, image, list_price, original_price, short_description, specifications, freeShip, superFastShip, topDeal } = req.body;
-            
+
             if (!category) {
                 return res.status(400).json({
                     success: false,
@@ -75,7 +75,9 @@ const bookController = {
                 specifications,
                 freeShip,
                 superFastShip,
-                topDeal
+                topDeal,
+                createdAt: Date.now(),
+                updatedAt: Date.now()
 
             }).save();
             return res.status(201).json(newBook)
@@ -149,7 +151,8 @@ const bookController = {
                 specifications,
                 freeShip,
                 superFastShip,
-                topDeal
+                topDeal,
+                updatedAt: Date.now()
             }, {
                 new: true
             });
@@ -159,7 +162,7 @@ const bookController = {
         }
     },
 
-    getBooks : async (req, res) =>{
+    getBooks: async (req, res) => {
         try {
             const books = await Book.find();
             return res.status(200).json(books)
@@ -167,8 +170,8 @@ const bookController = {
             return res.status(500).json(error)
         }
     },
-    
-    deleteBook : async (req, res) =>{
+
+    deleteBook: async (req, res) => {
         try {
             const id = req.params.id;
             const book = await Book.findByIdAndDelete(id);
@@ -177,7 +180,51 @@ const bookController = {
             return res.status(500).json(error)
         }
     },
+    searchBook: async (req, res) => {
+        try {
+            const { name } = req.params;
+            const books = await Book.find({ name });
+            return res.status(200).json(books)
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    },
+    filterBook: async (req, res) => {
+        try {
+            const {
+                freeShip,
+                superFastShip,
+                topDeal,
+                sortBy,
+            } = req.query;
 
+            const filter = {};
+
+            if (freeShip === "true") filter.freeShip = true;
+            if (superFastShip === "true") filter.superFastShip = true;
+            if (topDeal === "true") filter.topDeal = true;
+
+            let sort = {};
+            switch (sortBy) {
+                case "price_high_to_low":
+                    sort = { list_price: -1 };
+                    break;
+                case "price_low_to_high":
+                    sort = { list_price: 1 };
+                    break;
+                case "newest":
+                    sort = { createdAt: -1 };
+                    break;
+                default:
+                    sort = {};
+            }
+
+            const books = await Book.find(filter).sort(sort);
+            res.status(200).json(books);
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    }
 
 }
 
