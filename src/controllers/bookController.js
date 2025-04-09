@@ -182,7 +182,7 @@ const bookController = {
     },
     searchBook: async (req, res) => {
         try {
-            const { name } = req.params;
+            const { name } = req.query;
             const books = await Book.find({ name });
             return res.status(200).json(books)
         } catch (error) {
