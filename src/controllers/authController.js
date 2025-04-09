@@ -6,10 +6,14 @@ const authController = {
     register: async (req, res) => {
         try {
             // Validate email format
-            const { email, password } = req.body;
+            const { email, password, fullName } = req.body;
             
             if (!email.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)) {
                 return res.status(400).json("Invalid email format");
+            }
+
+            if (!fullName) {
+                return res.status(400).json("Name required");
             }
 
             // Check if email already exists
@@ -39,6 +43,7 @@ const authController = {
             const newUser = new User({
                 email: req.body.email,
                 password: hashedPassword,
+                fullName
             });
             const user = await newUser.save();
 
