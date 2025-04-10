@@ -103,6 +103,9 @@ const orderController = {
             const order = await Order.findById(id).populate({
                 path: 'items.book',
                 select: 'name image',
+            }).populate({
+                path: 'user',
+                select: 'fullName',
             });
             if (!order) {
                 return res.status(404).json({
