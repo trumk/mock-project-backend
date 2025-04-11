@@ -170,6 +170,87 @@ const bookController = {
             return res.status(500).json(error)
         }
     },
+    getBookDetails: async (req, res) => {
+        try {
+            const id = req.params.id;
+            const result = await Book.aggregate([
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId(id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'category',
+                        foreignField: '_id',
+                        as: 'category'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$category',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $graphLookup: {
+                        from: 'categories',
+                        startWith: '$category._id',
+                        connectFromField: 'parent',
+                        connectToField: '_id',
+                        as: 'categoryHierarchy'
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        author: 1,
+                        name: 1,
+                        description: 1,
+                        image: 1,
+                        list_price: 1,
+                        original_price: 1,
+                        rating_average: 1,
+                        short_description: 1,
+                        quantity_sold: 1,
+                        specifications: 1,
+                        freeShip: 1,
+                        superFastShip: 1,
+                        topDeal: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        category: {
+                            _id: '$category._id',
+                            name: '$category.name',
+                            image: '$category.image',
+                            layer: '$category.layer'
+                        },
+                        categoryHierarchy: {
+                            $map: {
+                                input: '$categoryHierarchy',
+                                as: 'cat',
+                                in: {
+                                    _id: '$$cat._id',
+                                    name: '$$cat.name',
+                                    image: '$$cat.image',
+                                    layer: '$$cat.layer',
+                                    depth: '$$cat.depth'
+                                }
+                            }
+                        }
+                    }
+                }
+            ]);
+
+            if (!result || result.length === 0) {
+                return res.status(404).json({ message: 'Book not found' });
+            }
+            return res.status(200).json(result[0]);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    },
 
     deleteBook: async (req, res) => {
         try {
