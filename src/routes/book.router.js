@@ -8,6 +8,7 @@ const router = express.Router();
 router.post("/create", verifyAdmin, bookController.createBook);
 router.put("/edit/:id", verifyAdmin,  bookController.editBook);
 router.get("/getBooks", bookController.getBooks);
+router.get("/book/:id", bookController.getBookDetails);
 router.delete("/delete/:id", verifyAdmin, bookController.deleteBook);
 router.get("/search", bookController.searchBook);
 router.get("/filter", bookController.filterBook);
