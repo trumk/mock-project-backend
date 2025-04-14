@@ -5,7 +5,6 @@ async function loadRoutes() {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const routesData = await response.json();
-    console.log("Routes from API:", routesData);
 
     const apiList = document.getElementById('apiList');
     if (!apiList) {
@@ -82,7 +81,6 @@ async function loadRoutes() {
       icon.addEventListener('click', async () => {
         const encodedTextToCopy = icon.getAttribute('data-copy');
         const textToCopy = decodeURIComponent(encodedTextToCopy);
-        console.log("Text to copy:", textToCopy);
 
         try {
           await navigator.clipboard.writeText(textToCopy);

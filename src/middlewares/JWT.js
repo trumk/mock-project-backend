@@ -39,7 +39,6 @@ export const verifyJWT = async (req, res, next) => {
         try {
             const { payload } = await jose.jwtVerify(accessToken, accessSecret);
             req.user = payload;
-            console.log(req.user);
             
             next();
         } catch (error) { 

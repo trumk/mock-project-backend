@@ -70,8 +70,6 @@ const categoryController = {
             }
 
             const category = await Category.findById(id)
-
-            console.log(category);
             
 
             if (!category) {
