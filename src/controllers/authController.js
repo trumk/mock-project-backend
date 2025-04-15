@@ -98,6 +98,52 @@ const authController = {
             return res.status(500).json(err);
         }
     },
+
+    googleLogin: async (req, res) => {
+        try {
+          const user = await User.findOne({ email: req.body.email });
+          if (user) {
+            const accessToken = generateAccessToken(user);
+            res.cookie("refreshToken", user.token, {
+              maxAge: 365 * 24 * 60 * 60 * 1000,
+              httpOnly: true,
+              secure: false,
+              path: "/",
+              sameSite: "strict",
+            });
+            const { password, token, ...others } = user._doc;
+            return res.status(200).json({ ...others, accessToken });
+          } else {
+            const generatedPassword =
+              Math.random().toString(36).slice(-8) +
+              Math.random().toString(36).slice(-8);
+            const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
+            const newUser = new User({
+              username:
+                req.body.name.split(" ").join("").toLowerCase() +
+                Math.random().toString(36).slice(-8),
+              email: req.body.email,
+              password: hashedPassword,
+              avatar: req.body.photo,
+            });
+            const userGoogle = await newUser.save();
+            const refreshToken = generateRefreshToken(userGoogle);
+            await User.findByIdAndUpdate(userGoogle._id, { token: refreshToken });
+            const accessToken = generateAccessToken(userGoogle);
+            res.cookie("refreshToken", refreshToken, {
+              maxAge: 365 * 24 * 60 * 60 * 1000,
+              httpOnly: true,
+              secure: false,
+              path: "/",
+              sameSite: "strict",
+            });
+            const { password, token, ...others } = userGoogle._doc;
+            return res.status(200).json({ ...others, accessToken });
+          }
+        } catch (err) {
+          return res.status(500).json(err);
+        }
+      },
 }
 
 export default authController;

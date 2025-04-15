@@ -1,4 +1,5 @@
 import Book from '../models/Book.model.js'
+import mongoose from 'mongoose';
 
 const bookController = {
     createBook: async (req, res) => {
@@ -248,6 +249,7 @@ const bookController = {
             }
             return res.status(200).json(result[0]);
         } catch (error) {
+            console.log(error)
             return res.status(500).json(error);
         }
     },
