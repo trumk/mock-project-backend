@@ -254,6 +254,28 @@ const bookController = {
         }
     },
 
+    getSimilarBooks: async (req, res) => {
+        try {
+            const { id } = req.params;
+    
+            
+            const currentBook = await Book.findById(id);
+            if (!currentBook) {
+                return res.status(404).json({ message: 'Book not found' });
+            }
+    
+            const books = await Book.find({
+                category: currentBook.category,
+                _id: { $ne: id } 
+            });
+    
+            return res.status(200).json(books);
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json(error);
+        }
+    },
+
     deleteBook: async (req, res) => {
         try {
             const id = req.params.id;

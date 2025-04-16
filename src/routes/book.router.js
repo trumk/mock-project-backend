@@ -10,6 +10,7 @@ router.put("/edit/:id", verifyAdmin,  bookController.editBook);
 router.get("/getBooks", bookController.getBooks);
 router.get("/book/:id", bookController.getBookDetails);
 router.delete("/delete/:id", verifyAdmin, bookController.deleteBook);
+router.get("/getSimilarBooks/:id", bookController.getSimilarBooks);
 router.get("/search", bookController.searchBook);
 router.get("/filter", bookController.filterBook);
 
