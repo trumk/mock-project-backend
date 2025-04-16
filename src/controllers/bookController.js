@@ -265,8 +265,8 @@ const bookController = {
     },
     searchBook: async (req, res) => {
         try {
-            const { name } = req.query;
-            const books = await Book.find({ name });
+            const { searchTerm } = req.query;
+            const books = await Book.find({ name: new RegExp(searchTerm, "i") });
             return res.status(200).json(books)
         } catch (error) {
             return res.status(500).json(error)
@@ -279,6 +279,7 @@ const bookController = {
                 superFastShip,
                 topDeal,
                 sortBy,
+                star
             } = req.query;
 
             const filter = {};
@@ -286,6 +287,9 @@ const bookController = {
             if (freeShip === "true") filter.freeShip = true;
             if (superFastShip === "true") filter.superFastShip = true;
             if (topDeal === "true") filter.topDeal = true;
+            if (star == "true") {
+                filter.rating_average = { $gte: 4 };
+            }
 
             let sort = {};
             switch (sortBy) {
