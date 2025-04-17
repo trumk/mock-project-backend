@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { applyDiscount } from "../middlewares/discountHandler.js";
 
 const Schema = mongoose.Schema;
 
@@ -56,19 +55,6 @@ const orderSchema = new Schema({
     required: true,
     default: "cash"
   },
-  freeShip: {
-    type: Boolean,
-    default: false,
-  },
-  shipFee: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  superFastShip: {
-    type: Boolean,
-    default: false,
-  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -79,19 +65,7 @@ const orderSchema = new Schema({
   },
 });
 
-orderSchema.pre("save", async function (next) {
-  this.updatedAt = Date.now();
-  await applyDiscount(this);
-  if (this.freeShip) {
-    this.shipFee = 0;
-  }
-  if (this.superFastShip) {
-    this.shipFee = this.shipFee + 30000;
-  }
-  this.finalPrice = this.totalPrice - this.discountAmount + this.shipFee;
-  if (this.finalPrice < 0) this.finalPrice = 0;
-  next();
-});
 
-const Order = mongoose.model("Order", orderSchema);
-export default Order;
+  
+  const Order = mongoose.model("Order", orderSchema);
+  export default Order;

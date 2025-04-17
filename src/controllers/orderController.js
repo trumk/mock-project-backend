@@ -5,7 +5,7 @@ const orderController = {
     createOrder: async (req, res) => {
         try {
             const user = req.user.id;
-            const { items, discountCode, shippingAddress, shipFee, superFastShip } = req.body;
+            const { items, discountCode, shippingAddress, totalPrice, finalPrice } = req.body;
             if (!items || items.length === 0) {
                 return res.status(400).json({
                     success: false,
@@ -40,30 +40,16 @@ const orderController = {
                     });
                 }
             }
-            let totalPrice = 0;
-            for (const item of items) {
-                totalPrice += item.quantity * item.price;
-            }
+            const discountAmount = totalPrice - finalPrice;
 
-            let freeShip = false;
-            const bookIds = items.map(item => item.book);
-            const books = await Book.find({ _id: { $in: bookIds } });
-
-            for (const book of books) {
-                if (book.freeShip) {
-                    freeShip = true;
-                    break;
-                }
-            }
             const order = await new Order({
                 user,
                 items,
                 totalPrice,
                 discountCode,
                 shippingAddress,
-                freeShip,
-                shipFee,
-                superFastShip
+                finalPrice,
+                discountAmount
             }).save();
             return res.status(201).json(order);
         } catch (error) {
