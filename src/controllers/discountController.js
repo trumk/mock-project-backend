@@ -116,54 +116,7 @@ const discountController = {
         } catch (error) {
             return res.status(500).json(error);
         }
-    },
-    applyDiscountPreview: async (req, res) => {
-        try {
-            const { discountCode, totalPrice } = req.body;
-            if (!discountCode) {
-                return res.status(400).json({ message: "Discount code is required" });
-            }
-            if (totalPrice === undefined || totalPrice === null) {
-                return res.status(400).json({ message: "Total price is required" });
-            }
-
-            const discount = await Discount.findOne({ code: discountCode, isActive: true });
-            if (!discount) {
-                return res.status(400).json({ message: "Invalid or inactive discount code" });
-            }
-
-            const now = Date.now();
-            if (discount.startDate > now || discount.endDate < now) {
-                return res.status(400).json({ message: "Discount code has expired or not yet valid" });
-            }
-            if (discount.usageLimit > 0 && discount.usedCount >= discount.usageLimit) {
-                return res.status(400).json({ message: "Discount code usage limit reached" });
-            }
-
-            if (totalPrice < discount.minOrderValue) {
-                return res.status(400).json({ message: `Order value must be at least ${discount.minOrderValue}` });
-            }
-
-            let discountAmount = 0;
-            if (discount.discountType === "percentage") {
-                discountAmount = (totalPrice * discount.value) / 100;
-                if (discount.maxDiscount > 0 && discountAmount > discount.maxDiscount) {
-                    discountAmount = discount.maxDiscount;
-                }
-            } else {
-                discountAmount = discount.value;
-            }
-
-            let finalPrice = totalPrice - discountAmount;
-            if (finalPrice < 0) finalPrice = 0;
-            res.status(200).json({
-                discountAmount,
-                finalPrice,
-            });
-        } catch (error) {
-            return res.status(500).json(error);
-        }
-    },
+    }
 }
 
 export default discountController;
