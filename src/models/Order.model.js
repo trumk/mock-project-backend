@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { applyDiscount } from "../middlewares/discountHandler.js";
 
 const Schema = mongoose.Schema;
 
