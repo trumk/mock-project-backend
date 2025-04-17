@@ -78,7 +78,7 @@ const orderController = {
     },
     getAllOrder: async (req, res) => {
         try {
-            const orders = await Order.find().
+            const orders = await Order.find()
                 .populate({
                 path: 'items.id',
                 select: 'name image',
