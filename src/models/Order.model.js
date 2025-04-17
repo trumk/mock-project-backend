@@ -66,19 +66,6 @@ const orderSchema = new Schema({
   },
 });
 
-orderSchema.pre("save", async function (next) {
-    this.updatedAt = Date.now();
-    await applyDiscount(this);
-    if(this.freeShip){
-      this.shipFee = 0;
-    }
-    if(this.superFastShip){
-      this.shipFee = this.shipFee + 30000;
-    }
-    this.finalPrice = this.totalPrice - this.discountAmount + this.shipFee;
-    if (this.finalPrice < 0) this.finalPrice = 0;
-    next();
-  });
   
   const Order = mongoose.model("Order", orderSchema);
   export default Order;
