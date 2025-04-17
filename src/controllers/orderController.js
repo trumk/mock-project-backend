@@ -1,14 +1,16 @@
 import Order from '../models/Order.model.js'
+import mongoose from 'mongoose';
 
 const orderController = {
     createOrder: async (req, res) => {
         try {
             const user = req.user.id;
             const { items, discountCode, shippingAddress, totalPrice, finalPrice } = req.body;
+
             if (!items || items.length === 0) {
                 return res.status(400).json({
                     success: false,
-                    message: 'items is required.'
+                    message: 'Items are required.',
                 });
             }
 
@@ -20,41 +22,52 @@ const orderController = {
             }
 
             for (const item of items) {
-                if (!item.book || !item.quantity || !item.price) {
+                if (!item.id || !mongoose.Types.ObjectId.isValid(item.id)) {
                     return res.status(400).json({
                         success: false,
-                        message: 'Each item must have book, quantity, and price.',
+                        message: 'Each item must have a valid book ID.',
                     });
                 }
-                if (item.quantity < 1) {
+                if (!item.quantity || item.quantity < 1) {
                     return res.status(400).json({
                         success: false,
                         message: 'Quantity must be at least 1.',
                     });
                 }
-                if (item.price < 0) {
+                if (!item.price || item.price < 0) {
                     return res.status(400).json({
                         success: false,
                         message: 'Price must be non-negative.',
                     });
                 }
             }
+
             const discountAmount = totalPrice - finalPrice;
 
             const order = await new Order({
                 user,
                 items,
                 totalPrice,
-                discountCode,
+                discountCode: discountCode || null,
                 shippingAddress,
                 finalPrice,
-                discountAmount
+                discountAmount,
             }).save();
-            return res.status(201).json(order);
+
+            return res.status(201).json({
+                success: true,
+                order,
+            });
         } catch (error) {
-            return res.status(500).json(error);
+            console.error('Error creating order:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Internal server error.',
+                error: error.message,
+            });
         }
     },
+
     getOrder: async (req, res) => {
         try {
             const id = req.user.id;

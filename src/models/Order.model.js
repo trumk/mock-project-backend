@@ -9,7 +9,7 @@ const orderSchema = new Schema({
     required: true,
   },
   items: [{
-    book: {
+    id: {
       type: Schema.Types.ObjectId,
       ref: "Book",
       required: true,
