@@ -1,5 +1,4 @@
 import Order from '../models/Order.model.js'
-import Book from '../models/Book.model.js'
 
 const orderController = {
     createOrder: async (req, res) => {
@@ -79,7 +78,7 @@ const orderController = {
     },
     getAllOrder: async (req, res) => {
         try {
-            const orders = await Order.find().
+            const orders = await Order.find()
                 .populate({
                 path: 'items.id',
                 select: 'name image',

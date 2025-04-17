@@ -18,7 +18,7 @@ const routesList = {
   book: [],
   user: [],
   discount: [],
-  order:[]
+  order: [],
 };
 
 dotenv.config();
@@ -59,7 +59,7 @@ function collectRoutes(router, basePath, groupName) {
           example = { response: getALl };
         } else if (method === "GET" && path === "/category/getByLayer") {
           example = { response: getByLayer, note: "/category/getByLayer?layer=1" };
-        }else if (method === "GET" && path === "/category/getAllChild/:id") {
+        } else if (method === "GET" && path === "/category/getAllChild/:id") {
           example = { response: getAllChild, note: "/category/getAllChild/67ed7de1a8df7ca5373c0e88" };
         } else if (method === "PUT" && path === "/category/edit/:id") {
           example = { request: register, note: "/category/edit/67ed7d7260d26963e1b3489f" };
