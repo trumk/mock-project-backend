@@ -19,7 +19,6 @@ const routesList = {
   user: [],
   discount: [],
   order: [],
-  stripe: [],
 };
 
 dotenv.config();
