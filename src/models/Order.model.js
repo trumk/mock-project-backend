@@ -56,19 +56,6 @@ const orderSchema = new Schema({
     required: true,
     default: "cash"
   },
-  freeShip: {
-    type: Boolean,
-    default: false,
-  },
-  shipFee : {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  superFastShip: {
-    type: Boolean,
-    default: false,
-  },
   createdAt: {
     type: Date,
     default: Date.now,
