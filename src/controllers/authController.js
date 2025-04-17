@@ -1,6 +1,7 @@
 import User from '../models/User.model.js'
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from '../middlewares/JWT.js'
+import admin from '../middlewares/firebaseAdmin.js'
 
 const authController = {
   register: async (req, res) => {
@@ -50,7 +51,7 @@ const authController = {
       const user = await newUser.save();
 
       // Generate Refresh Token
-      const refreshToken = generateRefreshToken(user);
+      const refreshToken = await generateRefreshToken(user);
       await User.findByIdAndUpdate(user._id, { token: refreshToken });
 
       // Return user json
@@ -101,10 +102,27 @@ const authController = {
 
   googleLogin: async (req, res) => {
     try {
-      const {email} = req.body;
+      const { accessToken } = req.body;
+      
+      if (!accessToken) {
+        return res.status(400).json({ message: 'Missing access token' });
+      }
+      const decodedToken = await admin.auth().verifyIdToken(accessToken);
+
+      if(!decodedToken){
+        return res.status(400).json({ message: 'Google authentication failed' });
+      }
+      
+
+      const { email, name, picture } = decodedToken;
+
+      if (!email) {
+        return res.status(400).json({ message: 'Invalid Google account' });
+      }
+      
       const user = await User.findOne({ email });
       if (user) {
-        const accessToken = generateAccessToken(user);
+        const accessToken = await generateAccessToken(user);
         res.cookie("refreshToken", user.token, {
           maxAge: 365 * 24 * 60 * 60 * 1000,
           httpOnly: true,
@@ -120,17 +138,18 @@ const authController = {
           Math.random().toString(36).slice(-8);
         const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
         const newUser = new User({
-          username:
-            req.body.name.split(" ").join("").toLowerCase() +
-            Math.random().toString(36).slice(-8),
-          email: req.body.email,
+          email,
           password: hashedPassword,
-          avatar: req.body.photo,
+          avatar: picture,
+          fullName:name
         });
+        
         const userGoogle = await newUser.save();
-        const refreshToken = generateRefreshToken(userGoogle);
+        
+        const refreshToken = await generateRefreshToken(userGoogle);
         await User.findByIdAndUpdate(userGoogle._id, { token: refreshToken });
-        const accessToken = generateAccessToken(userGoogle);
+        const accessToken = await generateAccessToken(userGoogle);
+
         res.cookie("refreshToken", refreshToken, {
           maxAge: 365 * 24 * 60 * 60 * 1000,
           httpOnly: true,
@@ -139,9 +158,13 @@ const authController = {
           sameSite: "strict",
         });
         const { password, token, ...others } = userGoogle._doc;
+
+        
         return res.status(200).json({ ...others, accessToken });
       }
     } catch (err) {
+      console.log(err);
+      
       return res.status(500).json(err);
     }
   },

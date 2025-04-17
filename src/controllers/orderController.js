@@ -20,7 +20,7 @@ const orderController = {
             }
 
             for (const item of items) {
-                if (!item.book || !item.quantity || !item.price) {
+                if (!item.id || !item.quantity || !item.price) {
                     return res.status(400).json({
                         success: false,
                         message: 'Each item must have book, quantity, and price.',
@@ -59,6 +59,13 @@ const orderController = {
         try {
             const id = req.user.id;
             const orders = await Order.find({ user: id })
+            .populate({
+                path: 'items.id',
+                select: 'name image',
+            }).populate({
+                path: 'user',
+                select: 'fullName',
+            })
             if (!orders) {
                 return res.status(404).json({
                     message: 'You do not have an order yet.',
@@ -71,7 +78,14 @@ const orderController = {
     },
     getAllOrder: async (req, res) => {
         try {
-            const orders = await Order.find();
+            const orders = await Order.find().
+                .populate({
+                path: 'items.id',
+                select: 'name image',
+            }).populate({
+                path: 'user',
+                select: 'fullName',
+            });
             if (!orders) {
                 return res.status(404).json({
                     message: 'You do not have an order yet.',
@@ -86,7 +100,7 @@ const orderController = {
         try {
             const { id } = req.params;
             const order = await Order.findById(id).populate({
-                path: 'items.book',
+                path: 'items.id',
                 select: 'name image',
             }).populate({
                 path: 'user',
