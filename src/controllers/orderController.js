@@ -1,5 +1,4 @@
 import Order from '../models/Order.model.js'
-import Book from '../models/Book.model.js'
 
 const orderController = {
     createOrder: async (req, res) => {
