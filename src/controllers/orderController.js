@@ -21,7 +21,7 @@ const orderController = {
             }
 
             for (const item of items) {
-                if (!item.book || !item.quantity || !item.price) {
+                if (!item.id || !item.quantity || !item.price) {
                     return res.status(400).json({
                         success: false,
                         message: 'Each item must have book, quantity, and price.',
