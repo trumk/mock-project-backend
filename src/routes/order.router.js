@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.post("/create", verifyJWT, orderController.createOrder);
 router.get("/getOrder", verifyJWT, orderController.getOrder);
-router.get("/getOrderDetail/:id", orderController.getOrderDetail);
+router.get('/getOrderDetail/:id', verifyJWT, orderController.getOrderDetail);
 router.get("/getAllOrder", verifyAdmin, orderController.getAllOrder);
-router.put("/edit/:id", verifyAdmin, orderController.cancelOrder);
+router.put("/cancel/:id", verifyAdmin, orderController.cancelOrder);
 
 export default router;
