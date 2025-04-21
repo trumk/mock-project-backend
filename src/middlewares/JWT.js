@@ -6,7 +6,7 @@ const accessSecret = new TextEncoder().encode(process.env.JWT_ACCESS_KEY)
 const refreshSecret = new TextEncoder().encode(process.env.JWT_REFRESH_KEY)
 const alg = 'HS256'
 
-export const generateAccessToken = async(user) => {
+export const generateAccessToken = async (user) => {
     return await new jose.SignJWT({
         id: user.id,
         email: user.email,
@@ -34,14 +34,15 @@ export const generateRefreshToken = async (user) => {
 
 export const verifyJWT = async (req, res, next) => {
     const token = req.headers.token;
+    console.log(token)
     if (token) {
         const accessToken = token.split(" ")[1];
         try {
             const { payload } = await jose.jwtVerify(accessToken, accessSecret);
             req.user = payload;
-            
+
             next();
-        } catch (error) { 
+        } catch (error) {
             return res.status(403).json("Token is not valid");
         }
     } else {
@@ -50,7 +51,7 @@ export const verifyJWT = async (req, res, next) => {
 }
 
 export const verifyAdmin = async (req, res, next) => {
-    verifyJWT(req, res, () => { 
+    verifyJWT(req, res, () => {
         if (req.user.role == "admin") {
             next();
         }
@@ -62,17 +63,18 @@ export const verifyAdmin = async (req, res, next) => {
 
 export const requestAccessToken = async (req, res) => {
     try {
-        const {refreshToken} = req.cookies;
+        const { refreshToken } = req.cookies;
         if (!refreshToken) {
             return res.status(401).json({ error: "You're not authenticated" });
         }
         const decoded = await jose.jwtVerify(refreshToken, refreshSecret);
-        const newAccessToken = await generateAccessToken(decoded);
+        const newAccessToken = await generateAccessToken(decoded.payload);
 
         return res.status(200).json({
             accessToken: newAccessToken
         });
     } catch (err) {
+        console.error("Error in requestAccessToken:", err);
         return res.status(500).json(err);
     }
 }

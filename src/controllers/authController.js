@@ -87,9 +87,9 @@ const authController = {
         res.cookie("refreshToken", user.token, {
           maxAge: 365 * 24 * 60 * 60 * 1000,
           httpOnly: true,
-          secure: true,
+          secure: false,
           path: "/",
-          sameSite: "Strict",
+          sameSite: "None",
         });
 
         const { password, token, ...others } = user._doc;
