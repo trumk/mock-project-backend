@@ -46,7 +46,7 @@ const orderSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
+    enum: ["pending", "processing", "shipped", "delivered", "cancelled", "cancel_requested"],
     default: "pending",
   },
   paymentMethod: {
@@ -63,6 +63,11 @@ const orderSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+orderSchema.pre("findOneAndUpdate", function (next) {
+  this.set({ updatedAt: Date.now() });
+  next();
 });
 
 const Order = mongoose.model("Order", orderSchema);
