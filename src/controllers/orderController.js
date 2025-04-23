@@ -111,7 +111,6 @@ const orderController = {
                     message: 'Order not found.',
                 });
             }
-            console.log(order)
 
             if (req.user.role !== "admin" && req.user.id !== order.user._id.toString()) {
                 return res.status(403).json({
