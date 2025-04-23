@@ -34,7 +34,6 @@ export const generateRefreshToken = async (user) => {
 
 export const verifyJWT = async (req, res, next) => {
     const token = req.headers.token;
-    console.log(token)
     if (token) {
         const accessToken = token.split(" ")[1];
         try {
