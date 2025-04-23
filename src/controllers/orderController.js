@@ -113,7 +113,7 @@ const orderController = {
             }
             console.log(order)
 
-            if (req.user.role !== "admin" && req.user.id !== order.user.toString()) {
+            if (req.user.role !== "admin" && req.user.id !== order.user._id.toString()) {
                 return res.status(403).json({
                     success: false,
                     message: "You do not have permission to view this order.",
