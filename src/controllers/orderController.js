@@ -289,30 +289,6 @@ const orderController = {
         }
     },
 
-
-    // cancelOrder: async (req, res) => {
-    //     try {
-    //         const id = req.params.id;
-    //         const user = req.user.id;
-    //         const role = req.user.role;
-    //         const order = await Order.findById(id)
-    //         if (!order) {
-    //             return res.status(404).json({
-    //                 message: 'You do not have an order yet.',
-    //             });
-    //         }
-    //         if (user !== order.user && role !== "admin") {
-    //             return res.status(403).json({
-    //                 message: 'You do not have permission.',
-    //             });
-    //         }
-
-    //         const cancelledOrder = await Order.findByIdAndUpdate(id, { status: "cancelled" }, { new: true, runValidators: true })
-    //         return res.status(200).json(cancelledOrder)
-    //     } catch (error) {
-    //         return res.status(500).json(error);
-    //     }
-    // }
 }
 
 export default orderController;

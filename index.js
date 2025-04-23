@@ -31,7 +31,7 @@ mongoose.connect(process.env.MONGO_URL)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: "https://titi-kiki.onrender.com",
+  origin: process.env.CLIENT_SITE_URL,
   credentials: true,
 }));
 app.use(cookieParser());
