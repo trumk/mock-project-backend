@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { applyDiscount } from "../middlewares/discountHandler.js";
 
 const Schema = mongoose.Schema;
 
@@ -69,6 +70,13 @@ orderSchema.pre("findOneAndUpdate", function (next) {
   this.set({ updatedAt: Date.now() });
   next();
 });
+
+orderSchema.pre("save", async function (next) {
+    this.updatedAt = Date.now();
+    await applyDiscount(this);
+    if (this.finalPrice < 0) this.finalPrice = 0;
+    next();
+  });
 
 const Order = mongoose.model("Order", orderSchema);
 export default Order;
