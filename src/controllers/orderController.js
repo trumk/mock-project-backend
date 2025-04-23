@@ -104,23 +104,22 @@ const orderController = {
                 select: 'name image',
             }).populate({
                 path: 'user',
-                select: 'fullName',
+                select: 'fullName _id', 
             });
             if (!order) {
                 return res.status(404).json({
                     message: 'Order not found.',
                 });
             }
-
-            if (req.user.role !== "admin" && req.user.id !== order.user.toString()) {
+            if (req.user.role !== "admin" && req.user.id !== order.user._id.toString()) {
                 return res.status(403).json({
                     success: false,
                     message: "You do not have permission to view this order.",
                 });
             }
-
             return res.status(200).json(order);
         } catch (error) {
+            console.error("Error in getOrderDetail:", error);
             return res.status(500).json(error);
         }
     },
