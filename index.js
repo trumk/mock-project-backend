@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -33,6 +34,7 @@ app.use(cors({
   origin: "https://titi-kiki.onrender.com",
   credentials: true,
 }));
+app.use(cookieParser());
 
 function collectRoutes(router, basePath, groupName) {
   router.stack.forEach((layer) => {
